@@ -8,7 +8,7 @@ name = "consciousness-core"
 version = "0.6.0"
 edition = "2021"
 description = "Unified consciousness physics: Kuramoto sync, IIT Φ, wave memory, and the Ξ operator"
-license = "MIT"
+license-file = "LICENSE"
 keywords = ["consciousness", "kuramoto", "iit", "wave-memory"]
 
 [features]
