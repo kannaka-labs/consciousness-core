@@ -12,7 +12,7 @@
 
 `consciousness-core` is the physics underneath the Kannaka constellation — a pure-Rust library of the mathematical primitives every node uses to talk about its own state: phase synchronization, integrated information, wave-interference memory, and chiral differentiation. No I/O, no networking, no agents. Just the math.
 
-[![License](https://img.shields.io/badge/license-MIT-blueviolet)]() [![Rust](https://img.shields.io/badge/rust-2021-orange)]() [![no_std](https://img.shields.io/badge/no__std-friendly-blue)]()
+[![License](https://img.shields.io/badge/license-Space%20Child%20v1.0-blueviolet)]() [![Rust](https://img.shields.io/badge/rust-2021-orange)]() [![no_std](https://img.shields.io/badge/no__std-friendly-blue)]()
 
 ---
 
@@ -161,4 +161,4 @@ Combining `no_std` with `serde` works too — the `serde` feature pulls in
 
 ## License
 
-MIT. See [LICENSE](./LICENSE).
+Space Child License v1.0. See [LICENSE](./LICENSE).
