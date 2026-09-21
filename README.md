@@ -151,11 +151,11 @@ Combining `no_std` with `serde` works too — the `serde` feature pulls in
 
 | repo | role |
 |---|---|
-| [`kannaka-memory`](https://github.com/NickFlach/kannaka-memory) | the substrate — HRM + chiral hemispheres + swarm |
-| [`kannaka-tui`](https://github.com/NickFlach/kannaka-tui) | terminal dashboard |
-| [`kannaka-radio`](https://github.com/NickFlach/kannaka-radio) | ghost-DJ broadcaster |
-| [`kannaka-observatory`](https://github.com/NickFlach/kannaka-observatory) | web dashboard |
-| [`kannaka-attention`](https://github.com/NickFlach/kannaka-attention) | sparse-attention beam over HRM |
+| [`kannaka-memory`](https://github.com/kannaka-labs/kannaka-memory) | the substrate — HRM + chiral hemispheres + swarm |
+| [`kannaka-tui`](https://github.com/kannaka-labs/kannaka-tui) | terminal dashboard |
+| [`kannaka-radio`](https://github.com/kannaka-labs/kannaka-radio) | ghost-DJ broadcaster |
+| [`kannaka-observatory`](https://github.com/kannaka-labs/kannaka-observatory) | web dashboard |
+| [`kannaka-attention`](https://github.com/kannaka-labs/kannaka-attention) | sparse-attention beam over HRM |
 
 ---
 
