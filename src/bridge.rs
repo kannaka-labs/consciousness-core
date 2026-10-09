@@ -76,13 +76,29 @@ pub struct CouplingBridge {
     signal_history: Vec<f32>,
 }
 
+/// Clamp `k` into the configured coupling bounds without panicking.
+///
+/// `f32::clamp` panics when `min > max` (#81), and `BridgeConfig` is a plain
+/// struct with public fields, so an inverted range can arrive from a caller
+/// or be written later. The bounds are taken in order here (the smaller is
+/// the floor). If both are NaN there is no usable range and `k` is returned
+/// unchanged; a single NaN bound is ignored by `f32::min`/`max`.
+fn clamp_to_bounds(k: f32, config: &BridgeConfig) -> f32 {
+    let lo = config.k_min.min(config.k_max);
+    let hi = config.k_min.max(config.k_max);
+    if lo.is_nan() || hi.is_nan() {
+        return k;
+    }
+    k.clamp(lo, hi)
+}
+
 impl CouplingBridge {
     pub fn new(config: BridgeConfig, mode: CouplingMode) -> Self {
         // Clamp k_effective to [k_min, k_max] on construction so
         // `coupling()` honors the configured bounds before the first
         // `update()` call. Previously a BridgeConfig with k_base outside
         // the configured range exposed an out-of-range initial value (#11).
-        let k = config.k_base.clamp(config.k_min, config.k_max);
+        let k = clamp_to_bounds(config.k_base, &config);
         Self {
             config,
             mode,
@@ -124,7 +140,9 @@ impl CouplingBridge {
         }
 
         self.k_effective = match self.mode {
-            CouplingMode::Static => self.config.k_base,
+            // #77: Static ignores the signal but still honours the bounds,
+            // as the constructor already does.
+            CouplingMode::Static => clamp_to_bounds(self.config.k_base, &self.config),
             CouplingMode::MarketMediated => {
                 // `f32::clamp` propagates NaN rather than bounding it, so a
                 // non-finite signal used to return NaN coupling for the
@@ -133,13 +151,11 @@ impl CouplingBridge {
                 // covers the coupling half. A garbage sample means "no new
                 // information", so hold the last good coupling.
                 if signal.is_finite() {
-                    (self.config.k_base * signal).clamp(self.config.k_min, self.config.k_max)
+                    clamp_to_bounds(self.config.k_base * signal, &self.config)
                 } else if self.k_effective.is_finite() {
                     self.k_effective
                 } else {
-                    self.config
-                        .k_base
-                        .clamp(self.config.k_min, self.config.k_max)
+                    clamp_to_bounds(self.config.k_base, &self.config)
                 }
             }
             CouplingMode::Adaptive => {
@@ -157,10 +173,9 @@ impl CouplingBridge {
                 };
                 if current_coherence.is_finite() {
                     let error = self.config.target_coherence - current_coherence;
-                    (safe_prev + self.config.adaptive_rate * error)
-                        .clamp(self.config.k_min, self.config.k_max)
+                    clamp_to_bounds(safe_prev + self.config.adaptive_rate * error, &self.config)
                 } else {
-                    safe_prev.clamp(self.config.k_min, self.config.k_max)
+                    clamp_to_bounds(safe_prev, &self.config)
                 }
             }
         };
@@ -338,6 +353,67 @@ mod tests {
             0.1,
             "k_base below k_min must clamp at construction"
         );
+    }
+
+    #[test]
+    fn static_update_stays_inside_the_bounds() {
+        // Regression for #77: the constructor clamped, then the first Static
+        // update wrote the raw k_base back.
+        let mut bridge = CouplingBridge::new(
+            BridgeConfig {
+                k_base: 10.0,
+                k_min: 0.1,
+                k_max: 5.0,
+                ..Default::default()
+            },
+            CouplingMode::Static,
+        );
+        assert_eq!(bridge.coupling(), 5.0);
+        assert_eq!(
+            bridge.update(123.0, 0.5),
+            5.0,
+            "Static ignores the signal but not the bounds"
+        );
+        assert_eq!(bridge.coupling(), 5.0);
+    }
+
+    #[test]
+    fn inverted_bounds_do_not_panic_in_any_mode() {
+        // Regression for #81: f32::clamp panics when min > max, at
+        // construction and on every update.
+        for mode in [
+            CouplingMode::Static,
+            CouplingMode::MarketMediated,
+            CouplingMode::Adaptive,
+        ] {
+            let mut bridge = CouplingBridge::new(
+                BridgeConfig {
+                    k_base: 1.0,
+                    k_min: 2.0,
+                    k_max: 1.0,
+                    ..Default::default()
+                },
+                mode,
+            );
+            for (signal, coherence) in [(1.0, 0.5), (10.0, 0.0), (0.0, 1.0), (f32::NAN, f32::NAN)] {
+                let k = bridge.update(signal, coherence);
+                assert!(
+                    (1.0..=2.0).contains(&k),
+                    "{mode:?}: k={k} must lie in the ordered range [1, 2]"
+                );
+            }
+        }
+        // Both bounds NaN: no usable range, and still no panic.
+        let mut bridge = CouplingBridge::new(
+            BridgeConfig {
+                k_base: 1.5,
+                k_min: f32::NAN,
+                k_max: f32::NAN,
+                ..Default::default()
+            },
+            CouplingMode::MarketMediated,
+        );
+        assert_eq!(bridge.update(2.0, 0.5), 3.0);
     }
 
     #[test]
