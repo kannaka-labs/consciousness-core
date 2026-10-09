@@ -36,6 +36,10 @@ use crate::wave::{try_cosine_similarity, VectorCompareError};
 // ─── Golden Ratio Constants ──────────────────────────────────────────────────
 
 /// Golden ratio φ = (1 + √5) / 2
+// The literal is kept (not `f32::consts::GOLDEN_RATIO`) so the published
+// value and older toolchains stay unchanged; newer clippy denies the
+// approximation by default (same fix as kannaka-memory #1097).
+#[allow(clippy::approx_constant)]
 pub const PHI: f32 = 1.618034;
 /// α = φ/2 ≈ 0.809017
 pub const ALPHA: f32 = 0.809017; // PHI / 2
