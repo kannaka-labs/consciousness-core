@@ -199,7 +199,7 @@ public API.
 
 ### 5. Semver / versioning
 
-Today: `version = "0.1.0"`. No CHANGELOG. No deprecation policy.
+When this map was written: `version = "0.1.0"`, no CHANGELOG, no deprecation policy. (Since done: see `CHANGELOG.md`; the crate is on crates.io.)
 
 Action: bump to `0.2.0` after the import-shim refactor (#2). Pin
 kannaka-memory to `consciousness-core = "0.2"`. Document the public-API

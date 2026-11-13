@@ -5,13 +5,18 @@ members = ["crates/wasm-bridge"]
 
 [package]
 name = "consciousness-core"
-version = "0.6.0"
+version = "0.6.1"
 edition = "2021"
 description = "Unified consciousness physics: Kuramoto sync, IIT Φ, wave memory, and the Ξ operator"
 license-file = "LICENSE"
 repository = "https://github.com/kannaka-labs/consciousness-core"
 readme = "README.md"
+documentation = "https://docs.rs/consciousness-core"
 keywords = ["consciousness", "kuramoto", "iit", "wave-memory"]
+categories = ["science", "mathematics", "no-std"]
+
+[package.metadata.docs.rs]
+features = ["serde"]
 
 [features]
 default = ["std"]
