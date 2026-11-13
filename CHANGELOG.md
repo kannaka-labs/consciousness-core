@@ -7,6 +7,39 @@ from 0.2.0 forward.
 
 ---
 
+## [0.6.1] — 2026-11-13
+
+Patch release. It brings the tag, the crates.io package and the changelog back
+into agreement.
+
+**Read this if you depend on 0.6.0.** The `consciousness-core` 0.6.0 package on
+crates.io was published on 2026-11-13 from the head of `master`, not from the
+`v0.6.0` git tag of 2026-08-18. It therefore already contains the two source
+changes listed below, while anything built from the `v0.6.0` tag does not.
+0.6.1 is the first version whose tag, package and changelog describe the same
+code. Its source is identical to the crates.io 0.6.0 package.
+
+### Fixed
+- `CouplingBridge`: every coupling clamp honours the configured bounds, and
+  none can panic. `CouplingMode::Static` wrote the raw `k_base` back on the
+  first `update()` although the constructor had clamped it (#77). An inverted
+  range (`k_min > k_max`) panicked in `f32::clamp`, at construction and on
+  every update (#81); the bounds are now taken in order. If both bounds are
+  NaN the value is returned unchanged.
+
+### Changed
+- `metrics::PHI` keeps its literal value and carries
+  `#[allow(clippy::approx_constant)]`, so newer clippy passes and the
+  published constant does not change.
+- Manifest: `repository` points at `kannaka-labs/consciousness-core`;
+  `documentation`, `categories` and docs.rs settings (the `serde` feature is
+  documented) added.
+- `release-cascade` workflow and the wasm bridge manifest no longer name the
+  old repository owner or an MIT licence; the licence is the Space Child
+  License in `LICENSE`.
+
+---
+
 ## [0.6.0] — 2026-08-11
 
 Closes the "incomparable reads as orthogonal" class at the wave layer (#67).

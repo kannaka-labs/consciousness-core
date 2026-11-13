@@ -3,7 +3,7 @@ name = "consciousness-core-wasm"
 version = "0.1.0"
 edition = "2021"
 description = "wasm-bindgen bridge exposing consciousness-core (Kuramoto + IIT Φ) to JavaScript/TypeScript"
-license = "MIT"
+license-file = "../../LICENSE"
 # Not published to crates.io — consumed as a wasm artifact by
 # @spacechild/consciousness-bridge (Space-Child-Dream monorepo).
 publish = false
