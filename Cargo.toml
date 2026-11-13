@@ -9,6 +9,8 @@ version = "0.6.0"
 edition = "2021"
 description = "Unified consciousness physics: Kuramoto sync, IIT Φ, wave memory, and the Ξ operator"
 license-file = "LICENSE"
+repository = "https://github.com/kannaka-labs/consciousness-core"
+readme = "README.md"
 keywords = ["consciousness", "kuramoto", "iit", "wave-memory"]
 
 [features]
